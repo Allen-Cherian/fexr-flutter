@@ -138,6 +138,4 @@ service SkyService {
   // Relay external requests or messages between subnets or nodes within the subnets partnered with Fexr. Optionally receive a response back to the sender.
   rpc Relay(RelayReq) returns (RelayRes) {}
  // rpc challengeStream (Request) returns (Response);
-  rpc StreamNumbers(google.protobuf.Empty) returns (stream StrNumRes) {}
-  rpc UpdateNumbers(google.protobuf.Empty) returns (StrNumRes) {}
 }
