@@ -1,0 +1,143 @@
+syntax = "proto3";
+package protos;
+option go_package = "github.com/getfexr/protos";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message HostReq {
+  string signedOtp = 1;
+  string address = 2;
+  string F0 = 3;
+}
+
+message HostRes {
+    string accessToken = 1;
+    string refreshToken = 2;
+}
+
+message NotificationRes {
+  enum type {
+    transaction = 0;
+    promotion = 1;
+  }
+  type data = 1;
+  google.protobuf.Timestamp time = 2;
+  string id = 3;
+  optional string from = 4;
+  optional string to = 5;
+  optional double amount = 6;
+  optional string message = 7;
+  optional string bannerImage = 8;
+  optional string headingText = 9;
+  optional string cta = 10;
+}
+
+message ChallengeReq {
+  enum purposeType{ 
+    pass = 0;
+    transaction = 1;
+    subscription = 2;
+  }
+  optional purposeType purpose = 1;
+  string sender = 2;
+  string challengeBody = 3;
+  optional google.protobuf.Timestamp issuedAt = 4;
+}
+
+message ChallengeRes {
+  string challengePayload = 1;
+  bool ok = 2;
+  optional string message = 3;
+}
+
+message VerifyReq {
+  string challengePayload = 1;
+  string address = 2;
+}
+
+message VerifyRes {
+  bool connected = 1;
+  string authPoint = 2;
+  int32 authCode = 3;
+}
+
+//TODO: require discussion
+message NativeInteractionReq {
+
+}
+
+//TODO: require discussion
+message NativeInteractionRes {
+
+}
+
+//TODO: require discussion
+message SyncReq {
+  string address = 1;
+}
+
+message SyncRes {
+  repeated NotificationRes notifications = 1;
+}
+
+message PayReq {
+  enum chain {
+    Rubix = 0;
+  }
+  chain name = 1;
+  string receiver = 2;
+  optional string comment = 3;
+  optional string validators = 4;
+}
+
+message PayRes {
+  bool status = 1;
+  int32 statusCode = 2;
+  string statusMessage = 3;
+  optional string transactionID = 4;
+}
+
+//TODO: require discussion
+message FindReq {
+  string address = 1;
+}
+
+//TODO: require discussion
+message FindRes {
+  string message = 1;
+}
+
+//TODO: require discussion
+message RelayReq {
+  string address = 1;
+  bool noreply = 2;
+}
+
+//TODO: require discussion
+message RelayRes {
+  string message = 1;
+}
+
+message StrNumRes {
+  string message = 1;
+}
+
+
+service SkyService {
+  rpc Host (HostReq) returns (HostRes) {}
+  rpc Notification (google.protobuf.Empty) returns (NotificationRes) {}
+  rpc Challenge (ChallengeReq) returns (ChallengeRes) {}
+  rpc Verify (VerifyReq) returns (VerifyRes) {}
+  rpc NativeInteraction (NativeInteractionReq) returns (NativeInteractionRes) {}
+  // two way syncing of wallet summary and wallets, balance, payments & activity data from a gateway.
+  rpc Sync (SyncReq) returns (stream SyncRes) {}
+  rpc Pay(stream PayReq) returns (stream PayRes) {}
+  // Find a user address or a transaction hash circuited with any of the Fexr partnered subnets. 
+  // Available in fexr.club home page and in the app.
+  rpc Find(FindReq) returns (FindRes) {}
+  // Relay external requests or messages between subnets or nodes within the subnets partnered with Fexr. Optionally receive a response back to the sender.
+  rpc Relay(RelayReq) returns (RelayRes) {}
+ // rpc challengeStream (Request) returns (Response);
+  rpc StreamNumbers(google.protobuf.Empty) returns (stream StrNumRes) {}
+  rpc UpdateNumbers(google.protobuf.Empty) returns (StrNumRes) {}
+}

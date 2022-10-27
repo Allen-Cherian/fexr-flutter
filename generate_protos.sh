@@ -1,0 +1,1 @@
+protoc --proto_path=lib/sync-v1/protos --dart_out=grpc:lib/protogen lib/sync-v1/protos/sky.proto google/protobuf/empty.proto google/protobuf/timestamp.proto
